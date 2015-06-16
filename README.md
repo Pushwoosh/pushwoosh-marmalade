@@ -1,1 +1,1 @@
-# pushwoosh-marmalade
+# Pushwoosh Marmalade push notifications module and sample
