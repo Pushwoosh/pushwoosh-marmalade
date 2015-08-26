@@ -11,54 +11,17 @@
 #include "s3ePushWoosh.h"
 
 
+// Define S3E_EXT_SKIP_LOADER_CALL_LOCK on the user-side to skip LoaderCallStart/LoaderCallDone()-entry.
+// e.g. in s3eNUI this is used for generic user-side IwUI-based implementation.
 #ifndef S3E_EXT_SKIP_LOADER_CALL_LOCK
-// For MIPs (and WP8) platform we do not have asm code for stack switching
-// implemented. So we make LoaderCallStart call manually to set GlobalLock
-#if defined __mips || defined S3E_ANDROID_X86 || (defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP))
+#if defined I3D_ARCH_MIPS || (defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)) || defined I3D_ARCH_NACLX86_64
+// For platforms missing stack-switching (MIPS, WP8, NaCl, etc.) make loader-entry via LoaderCallStart/LoaderCallDone() on the user-side.
 #define LOADER_CALL_LOCK
 #endif
 #endif
 
-/**
- * Definitions for functions types passed to/from s3eExt interface
- */
-typedef  s3eResult(*s3ePushWooshRegister_t)(s3ePushWooshCallback cbid, s3eCallback fn, void* userData);
-typedef  s3eResult(*s3ePushWooshUnRegister_t)(s3ePushWooshCallback cbid, s3eCallback fn);
-typedef    s3eBool(*s3ePushWooshNotificationsAvailable_t)();
-typedef  s3eResult(*s3ePushWooshNotificationRegister_t)();
-typedef  s3eResult(*s3ePushWooshNotificationRegisterWithPWAppID_t)(const char * pushwooshAppId);
-typedef     char *(*s3ePushWooshGetToken_t)();
-typedef  s3eResult(*s3ePushWooshNotificationUnRegister_t)();
-typedef  s3eResult(*s3ePushWooshNotificationSetIntTag_t)(const char * tagName, int tagValue);
-typedef  s3eResult(*s3ePushWooshNotificationSetStringTag_t)(const char * tagName, const char * tagValue);
-typedef  s3eResult(*s3ePushWooshNotificationSetBadgeNumber_t)(int badgeValue);
-typedef  s3eResult(*s3ePushWooshClearLocalNotifications_t)();
-typedef  s3eResult(*s3ePushWooshStartLocationTracking_t)();
-typedef  s3eResult(*s3ePushWooshStopLocationTracking_t)();
-typedef  s3eResult(*s3ePushWooshScheduleLocalNotification_t)(const char * message, int seconds, const char * userdata);
-typedef  s3eResult(*s3ePushWooshSetAndroidNotificationMultiMode_t)(bool enable);
 
-/**
- * struct that gets filled in by s3ePushWooshRegister
- */
-typedef struct s3ePushWooshFuncs
-{
-    s3ePushWooshRegister_t m_s3ePushWooshRegister;
-    s3ePushWooshUnRegister_t m_s3ePushWooshUnRegister;
-    s3ePushWooshNotificationsAvailable_t m_s3ePushWooshNotificationsAvailable;
-    s3ePushWooshNotificationRegister_t m_s3ePushWooshNotificationRegister;
-    s3ePushWooshNotificationRegisterWithPWAppID_t m_s3ePushWooshNotificationRegisterWithPWAppID;
-    s3ePushWooshGetToken_t m_s3ePushWooshGetToken;
-    s3ePushWooshNotificationUnRegister_t m_s3ePushWooshNotificationUnRegister;
-    s3ePushWooshNotificationSetIntTag_t m_s3ePushWooshNotificationSetIntTag;
-    s3ePushWooshNotificationSetStringTag_t m_s3ePushWooshNotificationSetStringTag;
-    s3ePushWooshNotificationSetBadgeNumber_t m_s3ePushWooshNotificationSetBadgeNumber;
-    s3ePushWooshClearLocalNotifications_t m_s3ePushWooshClearLocalNotifications;
-    s3ePushWooshStartLocationTracking_t m_s3ePushWooshStartLocationTracking;
-    s3ePushWooshStopLocationTracking_t m_s3ePushWooshStopLocationTracking;
-    s3ePushWooshScheduleLocalNotification_t m_s3ePushWooshScheduleLocalNotification;
-    s3ePushWooshSetAndroidNotificationMultiMode_t m_s3ePushWooshSetAndroidNotificationMultiMode;
-} s3ePushWooshFuncs;
+#include "s3ePushWoosh_interface.h"
 
 static s3ePushWooshFuncs g_Ext;
 static bool g_GotExt = false;
@@ -111,13 +74,13 @@ s3eResult s3ePushWooshRegister(s3ePushWooshCallback cbid, s3eCallback fn, void* 
         return S3E_RESULT_ERROR;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshRegister);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshRegister(cbid, fn, userData);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshRegister);
 #endif
 
     return ret;
@@ -131,13 +94,13 @@ s3eResult s3ePushWooshUnRegister(s3ePushWooshCallback cbid, s3eCallback fn)
         return S3E_RESULT_ERROR;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshUnRegister);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshUnRegister(cbid, fn);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshUnRegister);
 #endif
 
     return ret;
@@ -151,13 +114,13 @@ s3eBool s3ePushWooshNotificationsAvailable()
         return S3E_FALSE;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationsAvailable);
 #endif
 
     s3eBool ret = g_Ext.m_s3ePushWooshNotificationsAvailable();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationsAvailable);
 #endif
 
     return ret;
@@ -171,13 +134,13 @@ s3eResult s3ePushWooshNotificationRegister()
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationRegister);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshNotificationRegister();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationRegister);
 #endif
 
     return ret;
@@ -191,13 +154,13 @@ s3eResult s3ePushWooshNotificationRegisterWithPWAppID(const char * pushwooshAppI
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationRegisterWithPWAppID);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshNotificationRegisterWithPWAppID(pushwooshAppId);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationRegisterWithPWAppID);
 #endif
 
     return ret;
@@ -211,13 +174,13 @@ char * s3ePushWooshGetToken()
         return 0;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshGetToken);
 #endif
 
     char * ret = g_Ext.m_s3ePushWooshGetToken();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshGetToken);
 #endif
 
     return ret;
@@ -231,13 +194,13 @@ s3eResult s3ePushWooshNotificationUnRegister()
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationUnRegister);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshNotificationUnRegister();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationUnRegister);
 #endif
 
     return ret;
@@ -251,13 +214,13 @@ s3eResult s3ePushWooshNotificationSetIntTag(const char * tagName, int tagValue)
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationSetIntTag);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshNotificationSetIntTag(tagName, tagValue);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationSetIntTag);
 #endif
 
     return ret;
@@ -271,13 +234,13 @@ s3eResult s3ePushWooshNotificationSetStringTag(const char * tagName, const char 
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationSetStringTag);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshNotificationSetStringTag(tagName, tagValue);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationSetStringTag);
 #endif
 
     return ret;
@@ -291,13 +254,13 @@ s3eResult s3ePushWooshNotificationSetBadgeNumber(int badgeValue)
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationSetBadgeNumber);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshNotificationSetBadgeNumber(badgeValue);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshNotificationSetBadgeNumber);
 #endif
 
     return ret;
@@ -311,13 +274,13 @@ s3eResult s3ePushWooshClearLocalNotifications()
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshClearLocalNotifications);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshClearLocalNotifications();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshClearLocalNotifications);
 #endif
 
     return ret;
@@ -331,13 +294,13 @@ s3eResult s3ePushWooshStartLocationTracking()
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshStartLocationTracking);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshStartLocationTracking();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshStartLocationTracking);
 #endif
 
     return ret;
@@ -351,13 +314,13 @@ s3eResult s3ePushWooshStopLocationTracking()
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshStopLocationTracking);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshStopLocationTracking();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshStopLocationTracking);
 #endif
 
     return ret;
@@ -371,13 +334,13 @@ s3eResult s3ePushWooshScheduleLocalNotification(const char * message, int second
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshScheduleLocalNotification);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshScheduleLocalNotification(message, seconds, userdata);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshScheduleLocalNotification);
 #endif
 
     return ret;
@@ -391,13 +354,13 @@ s3eResult s3ePushWooshSetAndroidNotificationMultiMode(bool enable)
         return S3E_RESULT_SUCCESS;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshSetAndroidNotificationMultiMode);
 #endif
 
     s3eResult ret = g_Ext.m_s3ePushWooshSetAndroidNotificationMultiMode(enable);
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, NULL);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshSetAndroidNotificationMultiMode);
 #endif
 
     return ret;
