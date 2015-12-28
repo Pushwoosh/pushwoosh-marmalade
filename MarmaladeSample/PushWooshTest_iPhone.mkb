@@ -3,7 +3,7 @@ subproject ../s3ePushWoosh
 
 files
 {
-    PushWooshTest.cpp
+	PushWooshTest.cpp
 }
 
 
@@ -11,11 +11,11 @@ deployments
 {
 	version-major=1
 	version-minor=0
-	iphone-appid='com.pushwoosh.testapp'
+	iphone-appid='com.pushwoosh.testing'
 	iphone-info-plist=Info.plist
 }
 
 options
 {
-    strict
+	strict
 }

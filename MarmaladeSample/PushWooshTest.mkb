@@ -3,7 +3,7 @@ subproject ../s3ePushWoosh
 
 files
 {
-    PushWooshTest.cpp
+	PushWooshTest.cpp
 }
 
 deployments
@@ -13,5 +13,5 @@ deployments
 
 options
 {
-    strict
+	strict
 }
