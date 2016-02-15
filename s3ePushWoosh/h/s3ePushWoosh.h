@@ -53,7 +53,6 @@ s3eBool s3ePushWooshAvailable();
  * @see s3ePushWooshUnRegister
  * @note For more information on the system data passed as a parameter to the callback
  * registered using this function, see the @ref s3ePushWooshCallback enum.
- * @note It is not necessary to define a return value for any registered callback.
  */
 s3eResult s3ePushWooshRegister(s3ePushWooshCallback cbid, s3eCallback fn, void* userData);
 
@@ -64,6 +63,9 @@ s3eResult s3ePushWooshRegister(s3ePushWooshCallback cbid, s3eCallback fn, void* 
  * @return
  * - @ref S3E_RESULT_SUCCESS if no error occurred.
  * - @ref S3E_RESULT_ERROR if the operation failed.\n
+ * @note For more information on the systemData passed as a parameter to the callback
+ * registered using this function, see the s3ePushWooshCallback enum.
+ * @note It is not necessary to define a return value for any registered callback.
  * @see s3ePushWooshRegister
  */
 s3eResult s3ePushWooshUnRegister(s3ePushWooshCallback cbid, s3eCallback fn);
