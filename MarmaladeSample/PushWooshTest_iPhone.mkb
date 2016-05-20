@@ -11,7 +11,7 @@ deployments
 {
 	version-major=1
 	version-minor=0
-	iphone-appid='com.pushwoosh.testing'
+	iphone-appid='com.pushwoosh.demoapp'
 	iphone-info-plist=Info.plist
 	iphone-provisioning-profile='myapp.mobileprovision'
 }
