@@ -1,3 +1,7 @@
+Current version: 1.2.0
+=========================
+[Android] Use subproject google-play-services-android to prevent conflicts
+https://github.com/Pushwoosh/pushwoosh-marmalade/issues/2
 Current version: 1.1.1
 =========================
 Pushwoosh SDK update

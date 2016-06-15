@@ -29,6 +29,8 @@ defines
     IW_TRACE_CHANNEL_PUSHWOOSH_VERBOSE=2
 }
 
+subproject google-play-services-android
+
 if {{ not defined IW_MKF_IWCRT}}
     subproject iwutil
 
@@ -37,8 +39,6 @@ if {{ not defined IW_MKF_IWCRT}}
 #Include the extension's jar file during deployment
 deployments
 {
-    android-external-jars="android-support-v4.jar"
-    android-external-jars="google-play-services.jar"
     android-external-jars="Pushwoosh.jar"
     android-external-jars="lib/android/s3ePushWoosh.jar"
     android-so="lib/android/libs3ePushWoosh.so"
