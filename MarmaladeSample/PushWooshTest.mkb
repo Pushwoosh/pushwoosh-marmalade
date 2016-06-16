@@ -9,6 +9,7 @@ files
 deployments
 {
 	android-manifest = AndroidManifest.xml
+	android-extra-strings='(gps_app_id,12345678910)'
 }
 
 options
