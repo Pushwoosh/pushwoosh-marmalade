@@ -1819,8 +1819,8 @@ LOAD release/s3ePushWoosh_register.os
 LOAD /Applications/Marmalade.app/Contents/s3e/edk/lib/android/arm64/libedk.a
 LOAD /Applications/Marmalade.app/Contents/s3e/edk/lib/android/arm64/libs3e_android.so
 LOAD /Volumes/workspace/android-ndk-r10d/platforms/android-21/arch-arm64/usr/lib/liblog.so
-LOAD /Volumes/workspace/android-ndk-r10d/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/libgnustl_static.a
 LOAD /Volumes/workspace/android-ndk-r10d/toolchains/aarch64-linux-android-4.9/prebuilt/darwin-x86_64/bin/../lib/gcc/aarch64-linux-android/4.9/libgcc.a
+LOAD /Volumes/workspace/android-ndk-r10d/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/libgnustl_static.a
 LOAD /Volumes/workspace/android-ndk-r10d/platforms/android-21/arch-arm64/usr/lib/libstdc++.so
 LOAD /Volumes/workspace/android-ndk-r10d/platforms/android-21/arch-arm64/usr/lib/libm.so
 LOAD /Volumes/workspace/android-ndk-r10d/platforms/android-21/arch-arm64/usr/lib/libc.so

@@ -1,3 +1,6 @@
+Current version: 1.2.1
+=========================
+Local notifications support for iOS
 Current version: 1.2.0
 =========================
 [Android] Use subproject google-play-services-android to prevent conflicts
