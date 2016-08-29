@@ -365,3 +365,43 @@ s3eResult s3ePushWooshSetAndroidNotificationMultiMode(bool enable)
 
     return ret;
 }
+
+s3eResult s3ePushWooshSetUserId(const char * userId)
+{
+    IwTrace(PUSHWOOSH_VERBOSE, ("calling s3ePushWoosh[15] func: s3ePushWooshSetUserId"));
+
+    if (!_extLoad())
+        return S3E_RESULT_SUCCESS;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshSetUserId);
+#endif
+
+    s3eResult ret = g_Ext.m_s3ePushWooshSetUserId(userId);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshSetUserId);
+#endif
+
+    return ret;
+}
+
+s3eResult s3ePushWooshPostEvent(const char * event, const char * attributes)
+{
+    IwTrace(PUSHWOOSH_VERBOSE, ("calling s3ePushWoosh[16] func: s3ePushWooshPostEvent"));
+
+    if (!_extLoad())
+        return S3E_RESULT_SUCCESS;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshPostEvent);
+#endif
+
+    s3eResult ret = g_Ext.m_s3ePushWooshPostEvent(event, attributes);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3ePushWooshPostEvent);
+#endif
+
+    return ret;
+}

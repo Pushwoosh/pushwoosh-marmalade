@@ -20,6 +20,8 @@ typedef  s3eResult(*s3ePushWooshStartLocationTracking_t)();
 typedef  s3eResult(*s3ePushWooshStopLocationTracking_t)();
 typedef  s3eResult(*s3ePushWooshScheduleLocalNotification_t)(const char * message, int seconds, const char * userdata);
 typedef  s3eResult(*s3ePushWooshSetAndroidNotificationMultiMode_t)(bool enable);
+typedef  s3eResult(*s3ePushWooshSetUserId_t)(const char * userId);
+typedef  s3eResult(*s3ePushWooshPostEvent_t)(const char * event, const char * attributes);
 
 /**
  * struct that gets filled in by s3ePushWooshRegister
@@ -41,4 +43,6 @@ typedef struct s3ePushWooshFuncs
     s3ePushWooshStopLocationTracking_t m_s3ePushWooshStopLocationTracking;
     s3ePushWooshScheduleLocalNotification_t m_s3ePushWooshScheduleLocalNotification;
     s3ePushWooshSetAndroidNotificationMultiMode_t m_s3ePushWooshSetAndroidNotificationMultiMode;
+    s3ePushWooshSetUserId_t m_s3ePushWooshSetUserId;
+    s3ePushWooshPostEvent_t m_s3ePushWooshPostEvent;
 } s3ePushWooshFuncs;

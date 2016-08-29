@@ -116,6 +116,10 @@ s3eResult s3ePushWooshScheduleLocalNotification(const char * message, int second
  */
 s3eResult s3ePushWooshSetAndroidNotificationMultiMode(bool enable);
 
+s3eResult s3ePushWooshSetUserId(const char * userId);
+
+s3eResult s3ePushWooshPostEvent(const char * event, const char * attributes);
+
 // \cond HIDDEN_DEFINES
 S3E_END_C_DECL
 // \endcond
