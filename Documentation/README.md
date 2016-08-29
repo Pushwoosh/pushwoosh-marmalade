@@ -53,6 +53,8 @@ if (s3ePushWooshNotificationsAvailable())
 [s3eResult s3ePushWooshStopLocationTracking() S3E_RESULT_SUCCESS](#s3epushwooshstoplocationtracking)  
 [s3eResult s3ePushWooshScheduleLocalNotification(const char * message, int seconds, const char * userdata) S3E_RESULT_SUCCESS](#s3epushwooshschedulelocalnotification)  
 [s3eResult s3ePushWooshSetAndroidNotificationMultiMode(bool enable) S3E_RESULT_SUCCESS](#s3epushwooshsetandroidnotificationmultimode)  
+[s3eResult s3ePushWooshSetUserId(const char * userId) S3E_RESULT_SUCCESS](#s3epushwooshsetuserid)  
+[s3eResult s3ePushWooshPostEvent(const char * event, const char * attributes) S3E_RESULT_SUCCESS](#s3epushwooshpostevent)  
 
 ## Enums
 
@@ -211,4 +213,30 @@ Sets Android multi-notification mode.
 
 ```cpp
 s3eResult s3ePushWooshSetAndroidNotificationMultiMode(bool enable) S3E_RESULT_SUCCESS
+```
+
+---
+### s3ePushWooshSetUserId
+
+Set User indentifier. This could be Facebook ID, username or email, or any other user ID. This allows data and events to be matched across multiple user devices.
+
+```cpp
+s3eResult s3ePushWooshSetUserId(const char * userId) S3E_RESULT_SUCCESS
+```
+
+---
+### s3ePushWooshPostEvent
+
+Post events for In-App Messages. This can trigger In-App message display as specified in Pushwoosh Control Panel.
+
+```cpp
+s3eResult s3ePushWooshPostEvent(const char * event, const char * attributes) S3E_RESULT_SUCCESS
+```
+* **event** - event name
+* **attributes** - JSON object with additional data
+
+Example:
+
+```cpp
+s3ePushWooshPostEvent("buttonPressed", "{ \"buttonNumber\" : 4, \"buttonLabel\" : \"banner\" }");
 ```

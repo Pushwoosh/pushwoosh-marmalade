@@ -54,6 +54,10 @@ int main()
 		
 		//30 seconds for local notification to fire
 		//s3ePushWooshScheduleLocalNotification("Your pumpkins are ready!", 30, 0);
+
+		// postEvent example
+		//s3ePushWooshSetUserId("${userId}");
+		//s3ePushWooshPostEvent("testEvent", "{ \"attribute\" : \"value\" }");
 	}
 
 	// Wait for a quit request from the host OS
