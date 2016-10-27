@@ -17,3 +17,4 @@ S3E_EXT_PUSHWOOSH_DISABLE_ON_WS8 If defined, s3ePushWoosh is ommitted from deplo
 S3E_EXT_PUSHWOOSH_DISABLE_ON_WS81 If defined, s3ePushWoosh is ommitted from deployments to ws81
 S3E_EXT_PUSHWOOSH_DISABLE_ON_WP81 If defined, s3ePushWoosh is ommitted from deployments to wp81
 S3E_EXT_PUSHWOOSH_DISABLE_ON_WIN10 If defined, s3ePushWoosh is ommitted from deployments to win10
+S3E_EXT_PUSHWOOSH_DISABLE_ON_TVOS If defined, s3ePushWoosh is ommitted from deployments to tvos
