@@ -1,0 +1,16 @@
+#!/usr/bin/env mkb
+# Builder mkb file for the java portion of the s3ePushWoosh extension on android
+platform JAVA
+
+files
+{
+    (source/android)
+    com/arellomobile/pushwoosh/s3ePushWoosh.java
+    com/arellomobile/pushwoosh/PushActivity.java
+}
+
+librarypath "Pushwoosh.jar"
+librarypath "$MARMALADE_ROOT/s3e/deploy/plugins/android/android.jar"
+librarypath "$MARMALADE_ROOT/s3e/loader/android/s3e_release.jar"
+
+option output-name=lib/android/s3ePushWoosh.jar

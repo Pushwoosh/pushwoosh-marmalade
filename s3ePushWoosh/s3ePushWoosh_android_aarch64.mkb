@@ -1,0 +1,17 @@
+#!/usr/bin/env mkb
+# Builder mkb file for the s3ePushWoosh extension on android
+platform LINUX
+
+buildtype (SCONS, AARCH64)
+
+define S3E_ANDROID
+
+options
+{
+    dll
+    output-name="lib/android/libs3ePushWoosh.so"
+    output-name-debug="lib/android/libs3ePushWoosh_d.so"
+}
+define S3E_BUILD_EXT
+
+subproject s3ePushWoosh_build

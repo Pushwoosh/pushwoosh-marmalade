@@ -1,0 +1,16 @@
+# Builder mkf file for the c# portion of the s3ePushWoosh extension on wp8
+
+options
+{
+    csproj=s3ePushWooshManaged
+    csprojDLLRef="PushSDK.dll"
+	csprojDLLRef="Newtonsoft.Json.dll"
+}
+
+files
+{
+    (source/wp8)
+    AssemblyInfo.cs
+    s3ePushWoosh.cs
+    
+}
